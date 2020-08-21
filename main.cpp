@@ -6,7 +6,7 @@ using namespace sf;
 
 int main()
 {
-    RenderWindow window(VideoMode(800, 600), "SFML Works!", Style::Titlebar | Style::Close);
+    RenderWindow window(VideoMode(800, 600), "Tic Tac Toe", Style::Titlebar | Style::Close);
     RectangleShape squares[9];
 
     for (int i = 0; i < 9; i++)
