@@ -1,40 +1,14 @@
-// #include "tictactoe.h"
-
-#include <SFML/Graphics.hpp>
-
-using namespace sf;
+#include "game.h"
 
 int main()
 {
-    RenderWindow window(VideoMode(800, 600), "Tic Tac Toe", Style::Titlebar | Style::Close);
-    RectangleShape squares[9];
+    Game game;
 
-    for (int i = 0; i < 9; i++)
+    while (game.running())
     {
-        squares[i].setSize(Vector2f(100.f, 100.f));
+        game.update();
 
-        float x = squares[i].getSize().x;
-        float y = squares[i].getSize().y;
-        squares[i].setPosition(x + ((i % 3) * x), y + ((i / 3) * y));
-
-        squares[i].setOutlineColor(Color::Red);
-        squares[i].setOutlineThickness(5.f);
-        squares[i].setFillColor(Color::Yellow);
-    }
-
-    while (window.isOpen())
-    {
-        Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == Event::Closed)
-                window.close();
-        }
-
-        window.clear();
-        for (auto& square : squares)
-            window.draw(square);
-        window.display();
+        game.render();
     }
 
     return 0;
