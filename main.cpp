@@ -7,8 +7,20 @@ using namespace sf;
 int main()
 {
     RenderWindow window(VideoMode(800, 600), "SFML Works!", Style::Titlebar | Style::Close);
-    CircleShape shape(100.f);
-    shape.setFillColor(Color::Green);
+    RectangleShape squares[9];
+
+    for (int i = 0; i < 9; i++)
+    {
+        squares[i].setSize(Vector2f(100.f, 100.f));
+
+        float x = squares[i].getSize().x;
+        float y = squares[i].getSize().y;
+        squares[i].setPosition(x + ((i % 3) * x), y + ((i / 3) * y));
+
+        squares[i].setOutlineColor(Color::Red);
+        squares[i].setOutlineThickness(10.f);
+        squares[i].setFillColor(Color::Yellow);
+    }
 
     while (window.isOpen())
     {
@@ -20,7 +32,8 @@ int main()
         }
 
         window.clear();
-        window.draw(shape);
+        for (auto& square : squares)
+            window.draw(square);
         window.display();
     }
 
