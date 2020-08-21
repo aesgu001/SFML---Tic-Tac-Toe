@@ -18,7 +18,7 @@ int main()
         squares[i].setPosition(x + ((i % 3) * x), y + ((i / 3) * y));
 
         squares[i].setOutlineColor(Color::Red);
-        squares[i].setOutlineThickness(10.f);
+        squares[i].setOutlineThickness(5.f);
         squares[i].setFillColor(Color::Yellow);
     }
 
