@@ -8,10 +8,10 @@ int main()
     // game loop
     while (game.running())
     {
-        // update game
+        // update frame
         game.update();
 
-        // render game
+        // render frame
         game.render();
     }
 
