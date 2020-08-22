@@ -28,19 +28,25 @@ void Game::initData()
 void Game::initWindow()
 {
 	this->window = nullptr;
-	this->videoMode.width = 800;
-	this->videoMode.height = 600;
+	this->window2D = sf::Vector2i(800, 600);
 	this->title = "Tic Tac Toe";
 }
 
 void Game::initFont()
 {
-	
+	if (!this->scoreTextFont.loadFromFile("Fonts/Dosis-Light.ttf"))
+	{
+		std::cerr << "ERROR::GAME::INITFONT: Failed to load font!" << std::endl;
+	}
 }
 
 void Game::initText()
 {
-
+	this->scoreText.setFont(this->scoreTextFont);
+	this->scoreText.setCharacterSize(30);
+	this->scoreText.setPosition(this->window2D.x - 270.f, 30.f);
+	this->scoreText.setFillColor(sf::Color::White);
+	this->scoreText.setString("NONE");
 }
 
 void Game::initGameObjects()
@@ -54,7 +60,8 @@ void Game::initGameObjects()
 
 void Game::createWindow()
 {
-	this->window = new sf::RenderWindow(this->videoMode, this->title, sf::Style::Titlebar | sf::Style::Close);
+	this->window = new sf::RenderWindow(sf::VideoMode(this->window2D.x, this->window2D.y),
+		this->title, sf::Style::Titlebar | sf::Style::Close);
 	this->window->setFramerateLimit(60);
 }
 
@@ -81,6 +88,14 @@ void Game::pollEvents()
 	}
 }
 
+void Game::updateText()
+{
+	std::stringstream scoreS;
+	scoreS << "Player " << this->mk_player1 << "'s score: " << this->score_player1 << std::endl
+		<< "Player " << this->mk_player2 << "'s score: " << this->score_player2 << std::endl;
+	this->scoreText.setString(scoreS.str());
+}
+
 
 void Game::renderGrid(sf::RenderTarget& target)
 {
@@ -88,6 +103,11 @@ void Game::renderGrid(sf::RenderTarget& target)
 	{
 		target.draw(grid[i].square);
 	}
+}
+
+void Game::renderText(sf::RenderTarget& target)
+{
+	target.draw(this->scoreText);
 }
 
 
@@ -113,6 +133,8 @@ const bool Game::running() const
 void Game::update()
 {
 	pollEvents();
+
+	updateText();
 }
 
 void Game::render()
@@ -120,6 +142,7 @@ void Game::render()
 	this->window->clear();
 
 	this->renderGrid(*this->window);
+	this->renderText(*this->window);
 
 	this->window->display();
 }

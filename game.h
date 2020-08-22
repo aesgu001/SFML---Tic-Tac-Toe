@@ -1,5 +1,8 @@
 #pragma once
 
+#include <iostream>
+#include <sstream>
+
 #include <SFML/Graphics.hpp>
 
 struct Space
@@ -14,7 +17,7 @@ class Game
 private:
 	// window
 	sf::RenderWindow* window;
-	sf::VideoMode videoMode;
+	sf::Vector2i window2D;
 	sf::String title;
 	sf::Event event;
 
@@ -42,9 +45,11 @@ private:
 
 	// update functions
 	void pollEvents();
+	void updateText();
 
 	// render functions
 	void renderGrid(sf::RenderTarget& target);
+	void renderText(sf::RenderTarget& target);
 
 public:
 	Game();
