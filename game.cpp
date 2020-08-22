@@ -209,53 +209,47 @@ void Game::updateMousePosition()
 	this->mousePosition = this->window->mapPixelToCoords(sf::Mouse::getPosition(*this->window));
 }
 
-void Game::updateRestart()
+void Game::updateInput()
 {
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
 		if (!this->mouseHeld)
 		{
 			this->mouseHeld = true;
-			if (this->restartButton.getGlobalBounds().contains(this->mousePosition))
-				restartGame();
+			updateInputRestart();
+			if (!gameOver)
+				updateInputGrid();
 		}
 	}
 	else
-	{
 		this->mouseHeld = false;
-	}
 }
 
-void Game::updateGrid()
+void Game::updateInputRestart()
 {
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	if (this->restartButton.getGlobalBounds().contains(this->mousePosition))
+		restartGame();
+}
+
+void Game::updateInputGrid()
+{
+	bool gridUpdated = false;
+	for (int i = 0; i < 9 && !gridUpdated; i++)
 	{
-		if (!this->mouseHeld)
+		if (this->grid[i].square.getGlobalBounds().contains(this->mousePosition)
+			&& this->grid[i].mark == '\0')
 		{
-			this->mouseHeld = true;
-			bool playerSet = false;
-			for (int i = 0; i < 9 && !playerSet; i++)
+			gridUpdated = true;
+			this->grid[i].mark = mk_current_player;
+			if (checkMatch(mk_current_player))
 			{
-				if (this->grid[i].square.getGlobalBounds().contains(this->mousePosition)
-					&& this->grid[i].mark == '\0')
-				{
-					playerSet = true;
-					this->grid[i].mark = mk_current_player;
-					if (checkMatch(mk_current_player))
-					{
-						this->gameOver = true;
-						if (!tie)
-							changePlayerScore();
-					}
-					else
-						changeCurrentPlayer();
-				}
+				this->gameOver = true;
+				if (!tie)
+					changePlayerScore();
 			}
+			else
+				changeCurrentPlayer();
 		}
-	}
-	else
-	{
-		this->mouseHeld = false;
 	}
 }
 
@@ -340,10 +334,7 @@ void Game::update()
 
 	updateMousePosition();
 
-	if (!this->gameOver)
-		updateGrid();
-	else
-		updateRestart();
+	updateInput();
 
 	updateText();
 }

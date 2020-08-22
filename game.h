@@ -68,9 +68,10 @@ private:
 
 	// update functions
 	void pollEvents();
+	void updateInput();
 	void updateMousePosition();
-	void updateRestart();
-	void updateGrid();
+	void updateInputRestart();
+	void updateInputGrid();
 	void updateText();
 
 	// render functions
