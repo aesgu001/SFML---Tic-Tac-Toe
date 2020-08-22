@@ -41,9 +41,17 @@ private:
 	char mk_current_player;
 	size_t score_player1;
 	size_t score_player2;
+	bool gameOver;
+	bool tie;
 
 	// game functions
-	void changeCurrentPlayer(const char& current_player);
+	void changeCurrentPlayer();
+	void changePlayerScore();
+	const bool checkMatch(const char& current_player);
+	const bool horizontalMatch(const char& current_player) const;
+	const bool verticalMatch(const char& current_player) const;
+	const bool diagonalMatch(const char& current_player) const;
+	const bool noMatch() const;
 
 	// initialization functions
 	void initData();

@@ -20,12 +20,63 @@ Space::Space()
 }
 
 
-void Game::changeCurrentPlayer(const char& current_player)
+void Game::changeCurrentPlayer()
 {
 	if (this->mk_current_player == this->mk_player1)
 		this->mk_current_player = mk_player2;
 	else
 		this->mk_current_player = mk_player1;
+}
+
+void Game::changePlayerScore()
+{
+	if (this->mk_current_player == mk_player1)
+		this->score_player1 += 1;
+	else
+		this->score_player2 += 1;
+}
+
+const bool Game::checkMatch(const char& current_player)
+{
+	if (horizontalMatch(current_player) || verticalMatch(current_player) || diagonalMatch(current_player))
+		return true;
+	else if (noMatch())
+	{
+		this->tie = true;
+		return true;
+	}
+	else
+		return false;
+}
+
+const bool Game::horizontalMatch(const char& current_player) const
+{
+	return (this->grid[0].mark == current_player && this->grid[1].mark == current_player && this->grid[2].mark == current_player)
+		|| (this->grid[3].mark == current_player && this->grid[4].mark == current_player && this->grid[5].mark == current_player)
+		|| (this->grid[6].mark == current_player && this->grid[7].mark == current_player && this->grid[8].mark == current_player);
+}
+
+const bool Game::verticalMatch(const char& current_player) const
+{
+	return (this->grid[0].mark == current_player && this->grid[3].mark == current_player && this->grid[6].mark == current_player)
+		|| (this->grid[1].mark == current_player && this->grid[4].mark == current_player && this->grid[7].mark == current_player)
+		|| (this->grid[2].mark == current_player && this->grid[5].mark == current_player && this->grid[8].mark == current_player);
+}
+
+const bool Game::diagonalMatch(const char& current_player) const
+{
+	return (this->grid[0].mark == current_player && this->grid[4].mark == current_player && this->grid[8].mark == current_player)
+		|| (this->grid[6].mark == current_player && this->grid[4].mark == current_player && this->grid[2].mark == current_player);
+}
+
+const bool Game::noMatch() const
+{
+	for (int i = 0; i < 9; i++)
+	{
+		if (this->grid[i].mark == '\0')
+			return false;
+	}
+	return true;
 }
 
 
@@ -92,6 +143,8 @@ void Game::initGameObjects()
 	this->mk_current_player = mk_player1;
 	this->score_player1 = 0;
 	this->score_player2 = 0;
+	this->gameOver = false;
+	this->tie = false;
 }
 
 void Game::createWindow()
@@ -145,7 +198,14 @@ void Game::updateGrid()
 				{
 					playerSet = true;
 					this->grid[i].mark = mk_current_player;
-					changeCurrentPlayer(mk_current_player);
+					if (checkMatch(mk_current_player))
+					{
+						this->gameOver = true;
+						if (!tie)
+							changePlayerScore();
+					}
+					else
+						changeCurrentPlayer();
 				}
 			}
 		}
@@ -169,7 +229,15 @@ void Game::updateText()
 	}
 
 	std::stringstream promptS;
-	promptS << "Player " << this->mk_current_player << "'s Turn" << std::endl;
+	if (this->gameOver)
+	{
+		if (this->tie)
+			promptS << "It's a DRAW" << std::endl;
+		else
+			promptS << "Player " << mk_current_player << " WINS" << std::endl;
+	}
+	else
+		promptS << "Player " << this->mk_current_player << "'s Turn" << std::endl;
 	this->promptText.setString(promptS.str());
 
 	std::stringstream scoreS;
@@ -226,9 +294,11 @@ void Game::update()
 
 	updateMousePosition();
 
-	updateGrid();
-
-	updateText();
+	if (!this->gameOver)
+	{
+		updateGrid();
+		updateText();
+	}
 }
 
 void Game::render()
