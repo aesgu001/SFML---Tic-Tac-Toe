@@ -18,14 +18,24 @@ private:
 	sf::String title;
 	sf::Event event;
 
+	// resources
+	sf::Font scoreTextFont;
+
+	// texts
+	sf::Text scoreText;
+
 	// game objects
 	Space* grid;
 	char mk_player1;
 	char mk_player2;
+	size_t score_player1;
+	size_t score_player2;
 
 	// initialization functions
 	void initData();
 	void initWindow();
+	void initFont();
+	void initText();
 	void initGameObjects();
 	void createWindow();
 	void createGrid();

@@ -15,6 +15,12 @@ void Game::initData()
 	// window
 	initWindow();
 
+	// resources
+	initFont();
+
+	// text
+	initText();
+
 	// game objects
 	initGameObjects();
 }
@@ -27,11 +33,23 @@ void Game::initWindow()
 	this->title = "Tic Tac Toe";
 }
 
+void Game::initFont()
+{
+	
+}
+
+void Game::initText()
+{
+
+}
+
 void Game::initGameObjects()
 {
 	this->grid = new Space[9];
 	this->mk_player1 = 'X';
 	this->mk_player2 = 'O';
+	this->score_player1 = 0;
+	this->score_player2 = 0;
 }
 
 void Game::createWindow()
