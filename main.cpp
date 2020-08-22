@@ -2,8 +2,10 @@
 
 int main()
 {
+    // initialize game
     Game game;
 
+    // game loop
     while (game.running())
     {
         game.update();
@@ -11,5 +13,6 @@ int main()
         game.render();
     }
 
+    // end of application
     return 0;
 }
