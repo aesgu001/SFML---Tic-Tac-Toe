@@ -36,6 +36,17 @@ void Game::changePlayerScore()
 		this->score_player2 += 1;
 }
 
+void Game::restartGame()
+{
+	this->mk_current_player = this->mk_player1;
+	for (int i = 0; i < 9; i++)
+	{
+		this->grid[i].mark = '\0';
+	}
+	this->gameOver = false;
+	this->tie = false;
+}
+
 const bool Game::checkMatch(const char& current_player)
 {
 	if (horizontalMatch(current_player) || verticalMatch(current_player) || diagonalMatch(current_player))
@@ -112,7 +123,7 @@ void Game::initMouse()
 
 void Game::initFont()
 {
-	if (!this->scoreTextFont.loadFromFile("Fonts/Dosis-Light.ttf"))
+	if (!this->textFont.loadFromFile("Fonts/Dosis-Light.ttf"))
 	{
 		std::cerr << "ERROR::GAME::INITFONT: Failed to load font!" << std::endl;
 	}
@@ -121,23 +132,38 @@ void Game::initFont()
 void Game::initText()
 {
 	// prompt text
-	this->promptText.setFont(this->scoreTextFont);
+	this->promptText.setFont(this->textFont);
 	this->promptText.setCharacterSize(30);
 	this->promptText.setPosition(30.f, 30.f);
 	this->promptText.setFillColor(sf::Color::White);
 	this->promptText.setString("NONE");
 
 	// score text
-	this->scoreText.setFont(this->scoreTextFont);
+	this->scoreText.setFont(this->textFont);
 	this->scoreText.setCharacterSize(30);
 	this->scoreText.setPosition(this->window2D.x - 270.f, 30.f);
 	this->scoreText.setFillColor(sf::Color::White);
 	this->scoreText.setString("NONE");
+
+	// restart text
+	this->restartText.setFont(this->textFont);
+	this->restartText.setCharacterSize(30);
+	this->restartText.setPosition(this->window2D.x - 240.f, 335.f);
+	this->restartText.setFillColor(sf::Color::Black);
+	this->restartText.setString("NONE");
 }
 
 void Game::initGameObjects()
 {
 	this->grid = new Space[9];
+
+	this->restartButton.setSize(sf::Vector2f(150.f, 50.f));
+	this->restartButton.setPosition(this->window2D.x - 260.f, 330.f);
+	this->restartButton.setOutlineColor(sf::Color::Blue);
+	this->restartButton.setOutlineThickness(5.f);
+	this->restartButton.setFillColor(sf::Color::White);
+
+
 	this->mk_player1 = 'X';
 	this->mk_player2 = 'O';
 	this->mk_current_player = mk_player1;
@@ -183,6 +209,23 @@ void Game::updateMousePosition()
 	this->mousePosition = this->window->mapPixelToCoords(sf::Mouse::getPosition(*this->window));
 }
 
+void Game::updateRestart()
+{
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		if (!this->mouseHeld)
+		{
+			this->mouseHeld = true;
+			if (this->restartButton.getGlobalBounds().contains(this->mousePosition))
+				restartGame();
+		}
+	}
+	else
+	{
+		this->mouseHeld = false;
+	}
+}
+
 void Game::updateGrid()
 {
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -220,12 +263,9 @@ void Game::updateText()
 {
 	for (int i = 0; i < 9; i++)
 	{
-		if (this->grid[i].mark != '\0')
-		{
-			std::stringstream markS;
-			markS << this->grid[i].mark;
-			this->grid[i].markText.setString(markS.str());
-		}
+		std::stringstream markS;
+		markS << this->grid[i].mark;
+		this->grid[i].markText.setString(markS.str());
 	}
 
 	std::stringstream promptS;
@@ -244,6 +284,10 @@ void Game::updateText()
 	scoreS << "Player " << this->mk_player1 << "'s score: " << this->score_player1 << std::endl
 		<< "Player " << this->mk_player2 << "'s score: " << this->score_player2 << std::endl;
 	this->scoreText.setString(scoreS.str());
+
+	std::stringstream restartS;
+	restartS << "RESTART" << std::endl;
+	this->restartText.setString(restartS.str());
 }
 
 
@@ -251,8 +295,9 @@ void Game::renderGrid(sf::RenderTarget& target)
 {
 	for (int i = 0; i < 9; i++)
 	{
-		target.draw(grid[i].square);
+		target.draw(this->grid[i].square);
 	}
+	target.draw(this->restartButton);
 }
 
 void Game::renderText(sf::RenderTarget& target)
@@ -266,6 +311,7 @@ void Game::renderText(sf::RenderTarget& target)
 	}
 	target.draw(this->promptText);
 	target.draw(this->scoreText);
+	target.draw(this->restartText);
 }
 
 
@@ -295,10 +341,11 @@ void Game::update()
 	updateMousePosition();
 
 	if (!this->gameOver)
-	{
 		updateGrid();
-		updateText();
-	}
+	else
+		updateRestart();
+
+	updateText();
 }
 
 void Game::render()

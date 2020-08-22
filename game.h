@@ -28,14 +28,16 @@ private:
 	bool mouseHeld;
 
 	// resources
-	sf::Font scoreTextFont;
+	sf::Font textFont;
 
 	// texts
 	sf::Text promptText;
 	sf::Text scoreText;
+	sf::Text restartText;
 
 	// game objects
 	Space* grid;
+	sf::RectangleShape restartButton;
 	char mk_player1;
 	char mk_player2;
 	char mk_current_player;
@@ -47,6 +49,7 @@ private:
 	// game functions
 	void changeCurrentPlayer();
 	void changePlayerScore();
+	void restartGame();
 	const bool checkMatch(const char& current_player);
 	const bool horizontalMatch(const char& current_player) const;
 	const bool verticalMatch(const char& current_player) const;
@@ -66,6 +69,7 @@ private:
 	// update functions
 	void pollEvents();
 	void updateMousePosition();
+	void updateRestart();
 	void updateGrid();
 	void updateText();
 
