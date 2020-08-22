@@ -3,6 +3,16 @@
 Space::Space()
 {
 	this->mark = '\0';
+
+	if (!this->markTextFont.loadFromFile("Fonts/Dosis-Light.ttf"))
+	{
+		std::cerr << "ERROR::GAME::INITFONT: Failed to load font!" << std::endl;
+	}
+	this->markText.setFont(this->markTextFont);
+	this->markText.setCharacterSize(100);
+	this->markText.setFillColor(sf::Color::Black);
+	this->markText.setString("");
+
 	this->square.setSize(sf::Vector2f(100.f, 100.f));
 	this->square.setOutlineColor(sf::Color::Red);
 	this->square.setOutlineThickness(5.f);
@@ -10,10 +20,22 @@ Space::Space()
 }
 
 
+void Game::changeCurrentPlayer(const char& current_player)
+{
+	if (this->mk_current_player == this->mk_player1)
+		this->mk_current_player = mk_player2;
+	else
+		this->mk_current_player = mk_player1;
+}
+
+
 void Game::initData()
 {
 	// window
 	initWindow();
+
+	// mouse
+	initMouse();
 
 	// resources
 	initFont();
@@ -32,6 +54,11 @@ void Game::initWindow()
 	this->title = "Tic Tac Toe";
 }
 
+void Game::initMouse()
+{
+	this->mouseHeld = false;
+}
+
 void Game::initFont()
 {
 	if (!this->scoreTextFont.loadFromFile("Fonts/Dosis-Light.ttf"))
@@ -42,6 +69,14 @@ void Game::initFont()
 
 void Game::initText()
 {
+	// prompt text
+	this->promptText.setFont(this->scoreTextFont);
+	this->promptText.setCharacterSize(30);
+	this->promptText.setPosition(30.f, 30.f);
+	this->promptText.setFillColor(sf::Color::White);
+	this->promptText.setString("NONE");
+
+	// score text
 	this->scoreText.setFont(this->scoreTextFont);
 	this->scoreText.setCharacterSize(30);
 	this->scoreText.setPosition(this->window2D.x - 270.f, 30.f);
@@ -54,6 +89,7 @@ void Game::initGameObjects()
 	this->grid = new Space[9];
 	this->mk_player1 = 'X';
 	this->mk_player2 = 'O';
+	this->mk_current_player = mk_player1;
 	this->score_player1 = 0;
 	this->score_player2 = 0;
 }
@@ -70,6 +106,7 @@ void Game::createGrid()
 	for (int i = 0; i < 9; i++)
 	{
 		sf::Vector2f squareSize = grid[i].square.getSize();
+		grid[i].markText.setPosition(squareSize.x + 24 + ((i % 3) * squareSize.x), squareSize.y - 15 + ((i / 3) * squareSize.y));
 		grid[i].square.setPosition(squareSize.x + ((i % 3) * squareSize.x), squareSize.y + ((i / 3) * squareSize.y));
 	}
 }
@@ -88,8 +125,53 @@ void Game::pollEvents()
 	}
 }
 
+void Game::updateMousePosition()
+{
+	this->mousePosition = this->window->mapPixelToCoords(sf::Mouse::getPosition(*this->window));
+}
+
+void Game::updateGrid()
+{
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		if (!this->mouseHeld)
+		{
+			this->mouseHeld = true;
+			bool playerSet = false;
+			for (int i = 0; i < 9 && !playerSet; i++)
+			{
+				if (this->grid[i].square.getGlobalBounds().contains(this->mousePosition)
+					&& this->grid[i].mark == '\0')
+				{
+					playerSet = true;
+					this->grid[i].mark = mk_current_player;
+					changeCurrentPlayer(mk_current_player);
+				}
+			}
+		}
+	}
+	else
+	{
+		this->mouseHeld = false;
+	}
+}
+
 void Game::updateText()
 {
+	for (int i = 0; i < 9; i++)
+	{
+		if (this->grid[i].mark != '\0')
+		{
+			std::stringstream markS;
+			markS << this->grid[i].mark;
+			this->grid[i].markText.setString(markS.str());
+		}
+	}
+
+	std::stringstream promptS;
+	promptS << "Player " << this->mk_current_player << "'s Turn" << std::endl;
+	this->promptText.setString(promptS.str());
+
 	std::stringstream scoreS;
 	scoreS << "Player " << this->mk_player1 << "'s score: " << this->score_player1 << std::endl
 		<< "Player " << this->mk_player2 << "'s score: " << this->score_player2 << std::endl;
@@ -107,6 +189,14 @@ void Game::renderGrid(sf::RenderTarget& target)
 
 void Game::renderText(sf::RenderTarget& target)
 {
+	for (int i = 0; i < 9; i++)
+	{
+		if (this->grid[i].mark != '\0')
+		{
+			target.draw(this->grid[i].markText);
+		}
+	}
+	target.draw(this->promptText);
 	target.draw(this->scoreText);
 }
 
@@ -133,6 +223,10 @@ const bool Game::running() const
 void Game::update()
 {
 	pollEvents();
+
+	updateMousePosition();
+
+	updateGrid();
 
 	updateText();
 }
