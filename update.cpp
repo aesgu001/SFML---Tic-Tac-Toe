@@ -43,9 +43,9 @@ void Game::updateHoverRestart()
 	// add transparency to button if hovered
 	if (this->restartButton.space.getGlobalBounds().contains(this->mousePosition))
 	{
-		sf::Color transparentColor = sf::Color::White;
+		sf::Color transparentColor = BUTTON_COLOR;
 		transparentColor.a = static_cast<sf::Uint8>(transparentColor.a * 0.75f);
-		sf::Color transparentOutlineColor = sf::Color::Blue;
+		sf::Color transparentOutlineColor = BUTTON_OUTLINE;
 		transparentOutlineColor.a = static_cast<sf::Uint8>(transparentOutlineColor.a * 0.75f);
 
 		this->restartButton.space.setFillColor(transparentColor);
@@ -53,8 +53,8 @@ void Game::updateHoverRestart()
 	}
 	else
 	{
-		this->restartButton.space.setFillColor(sf::Color::White);
-		this->restartButton.space.setOutlineColor(sf::Color::Blue);
+		this->restartButton.space.setFillColor(BUTTON_COLOR);
+		this->restartButton.space.setOutlineColor(BUTTON_OUTLINE);
 	}
 }
 
@@ -66,9 +66,9 @@ void Game::updateHoverGrid()
 		if (this->grid[i].space.getGlobalBounds().contains(this->mousePosition)
 			&& this->grid[i].mark == '\0')
 		{
-			sf::Color transparentColor = sf::Color::Yellow;
+			sf::Color transparentColor = TILE_COLOR;
 			transparentColor.a = static_cast<sf::Uint8>(transparentColor.a * 0.75f);
-			sf::Color transparentOutlineColor = sf::Color::Red;
+			sf::Color transparentOutlineColor = TILE_OUTLINE;
 			transparentOutlineColor.a = static_cast<sf::Uint8>(transparentOutlineColor.a * 0.75f);
 
 			this->grid[i].space.setFillColor(transparentColor);
@@ -76,8 +76,8 @@ void Game::updateHoverGrid()
 		}
 		else
 		{
-			this->grid[i].space.setFillColor(sf::Color::Yellow);
-			this->grid[i].space.setOutlineColor(sf::Color::Red);
+			this->grid[i].space.setFillColor(TILE_COLOR);
+			this->grid[i].space.setOutlineColor(TILE_OUTLINE);
 		}
 	}
 }
@@ -114,8 +114,8 @@ void Game::updateInputGrid()
 		{
 			gridUpdated = true;
 			this->grid[i].mark = mark_next_player;
-			this->grid[i].space.setFillColor(sf::Color::Yellow);
-			this->grid[i].space.setOutlineColor(sf::Color::Red);
+			this->grid[i].space.setFillColor(TILE_COLOR);
+			this->grid[i].space.setOutlineColor(TILE_OUTLINE);
 			if (checkMatch(mark_next_player))
 			{
 				this->gameOver = true;

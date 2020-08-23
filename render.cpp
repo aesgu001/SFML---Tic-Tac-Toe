@@ -3,7 +3,7 @@
 void Game::render()
 {
 	// clear previous frame
-	this->window->clear();
+	this->window->clear(BACKGROUND_COLOR);
 
 	// draw game objects
 	this->renderGrid(*this->window);

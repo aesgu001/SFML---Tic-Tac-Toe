@@ -9,7 +9,7 @@ int main()
     if (!game.loaded())
     {
         std::cerr << "Failed to load game data!" << std::endl
-            << "Press any key to exit..." << std::endl;
+            << "Press any key and ENTER to exit..." << std::endl;
         std::cin.get();
         return 1;
     }

@@ -23,8 +23,8 @@ bool Tile::initTile(const std::string& fontFile)
 
 	// init space
 	this->space.setSize(sf::Vector2f(100.f, 100.f));
-	this->space.setFillColor(sf::Color::Yellow);
-	this->space.setOutlineColor(sf::Color::Red);
+	this->space.setFillColor(TILE_COLOR);
+	this->space.setOutlineColor(TILE_OUTLINE);
 	this->space.setOutlineThickness(5.f);
 
 	return true;
@@ -48,8 +48,8 @@ bool Button::initButton(const std::string& fontFile)
 
 	// init space
 	this->space.setSize(sf::Vector2f(150.f, 50.f));
-	this->space.setFillColor(sf::Color::White);
-	this->space.setOutlineColor(sf::Color::Blue);
+	this->space.setFillColor(BUTTON_COLOR);
+	this->space.setOutlineColor(BUTTON_OUTLINE);
 	this->space.setOutlineThickness(5.f);
 
 	return true;
