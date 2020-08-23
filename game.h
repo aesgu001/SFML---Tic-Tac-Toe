@@ -1,17 +1,31 @@
 #pragma once
 
-#include <iostream>
-#include <sstream>
+#include "global.h"
 
-#include <SFML/Graphics.hpp>
-
-struct Space
+class Tile
 {
-	sf::RectangleShape square;
-	sf::Font markTextFont;
+private:
+	sf::Font textFont;
+
+public:
+	sf::RectangleShape space;
 	sf::Text markText;
 	char mark;
-	Space();
+
+	Tile();
+	bool initTile(const std::string& fontFile);
+};
+
+class Button
+{
+private:
+	sf::Font textFont;
+
+public:
+	sf::RectangleShape space;
+	sf::Text buttonText;
+
+	bool initButton(const std::string& fontFile);
 };
 
 class Game
@@ -19,8 +33,8 @@ class Game
 private:
 	// window
 	sf::RenderWindow* window;
-	sf::Vector2i window2D;
-	sf::String title;
+	sf::Vector2i windowSize;
+	sf::String windowTitle;
 	sf::Event event;
 
 	// mouse
@@ -33,43 +47,52 @@ private:
 	// texts
 	sf::Text promptText;
 	sf::Text scoreText;
-	sf::Text restartText;
 
-	// game objects
-	Space* grid;
-	sf::RectangleShape restartButton;
-	char mk_player1;
-	char mk_player2;
-	char mk_current_player;
+	// game elements
+	Tile* grid;
+	Button restartButton;
+	char mark_player1;
+	char mark_player2;
+	char mark_next_player;
 	size_t score_player1;
 	size_t score_player2;
 	bool gameOver;
-	bool tie;
+	bool draw;
+
+	// game data checker
+	bool gameDataLoaded;
 
 	// game functions
-	void changeCurrentPlayer();
-	void changePlayerScore();
+	void nextPlayer();
+	void addWinnerScore();
 	void restartGame();
 	const bool checkMatch(const char& current_player);
-	const bool horizontalMatch(const char& current_player) const;
-	const bool verticalMatch(const char& current_player) const;
-	const bool diagonalMatch(const char& current_player) const;
+	const bool horizontalMatch(const char& current_player);
+	const bool verticalMatch(const char& current_player);
+	const bool diagonalMatch(const char& current_player);
 	const bool noMatch() const;
 
 	// initialization functions
-	void initData();
+	bool initData();
 	void initWindow();
 	void initMouse();
-	void initFont();
+	bool initFont(const std::string& fontFile);
 	void initText();
-	void initGameObjects();
+	bool initGameElements(const std::string& fontFile);
+
+	// create functions
 	void createWindow();
+	void createText();
 	void createGrid();
+	void createButton();
 
 	// update functions
 	void pollEvents();
-	void updateInput();
 	void updateMousePosition();
+	void updateMouseHover();
+	void updateHoverRestart();
+	void updateHoverGrid();
+	void updateMouseInput();
 	void updateInputRestart();
 	void updateInputGrid();
 	void updateText();
@@ -82,7 +105,8 @@ public:
 	Game();
 	~Game();
 
-	// game loop functions
+	// public game functions
+	const bool loaded() const;
 	const bool running() const;
 	void update();
 	void render();
